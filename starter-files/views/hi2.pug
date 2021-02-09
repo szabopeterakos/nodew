@@ -1,0 +1,11 @@
+extends layout
+block header 
+  p replaced
+block content 
+  .dog 
+  - const lali = owner.toUpperCase(); // native js
+  span Hi little #{name} how is #{owner} doing? #{h.siteName} :D
+
+  .mani
+  p #{lali}
+  img(src="" alt=`as variable ${owner}`)
