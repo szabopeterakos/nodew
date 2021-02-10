@@ -121,3 +121,21 @@ exports.getStoreBySlug = async (req, res, next) => {
   // res.json(store);
   res.render('store', { store, title: store.name });
 };
+
+exports.getStoresByTag1 = async (req, res) => {
+  const tags = await Store.getTags();
+  // res.json(tags);
+  const activeTag = req.params.tag;
+  res.render('tags', { tags, title: 'Tags', activeTag });
+};
+
+exports.getStoresByTag = async (req, res) => {
+  const activeTag = req.params.tag;
+  const _tags = Store.getTags();
+  const _stores = Store.find({ tags: activeTag || { $exists: true } });
+  const promiseLand = await Promise.all([_tags, _stores]);
+  const [tags, stores] = await Promise.all([_tags, _stores]);
+
+  // res.json(promiseLand);
+  res.render('tags', { tags, stores, title: 'Tags', activeTag });
+};

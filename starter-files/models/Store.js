@@ -34,15 +34,40 @@ const schema = new mongoose.Schema({
       required: 'You must supply an address!',
     },
   },
-  photo: String
+  photo: String,
 });
 
-schema.pre('save', function (next) {
+schema.pre('save', async function (next) {
   if (!this.isModified('name')) {
     return next();
   }
   this.slug = slug(this.name);
+  // find other in already stored
+  const regex = new RegExp(`^(${this.slug})((-[0-9]*$)?)`, 'i'); // -i case insensitive
+  const storesWithPostFix = await this.constructor.find({ slug: regex });
+  if (storesWithPostFix.length) {
+    this.slug = `${this.slug}-${storesWithPostFix.length + 1}`;
+  }
   next();
 });
+
+// default function needed to bound via this to the model itself.
+schema.statics.getTags = function () {
+  // https://docs.mongodb.com/manual/reference/operator/aggregation/
+  return this.aggregate([
+    { $unwind: '$tags' },
+    {
+      $group: {
+        _id: '$tags',
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $sort: {
+        count: -1,
+      },
+    },
+  ]);
+};
 
 module.exports = mongoose.model('Store', schema);

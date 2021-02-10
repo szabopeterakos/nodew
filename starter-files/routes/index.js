@@ -59,6 +59,10 @@ router.get('/stores/:id/edit', catchErrors(ctrl.editStore));
 
 router.get('/store/:slug', catchErrors(ctrl.getStoreBySlug));
 
+router.get('/tags', catchErrors(ctrl.getStoresByTag));
+router.get('/tags/:tag', catchErrors(ctrl.getStoresByTag));
+
+
 // --------------------------------------------------
 
 module.exports = router;
