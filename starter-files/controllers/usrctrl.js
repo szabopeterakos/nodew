@@ -1,13 +1,22 @@
 const mongoose = require('mongoose');
+const User = mongoose.model('User');
+const promisify = require('es6-promisify');
 
 exports.login = async (req, res) => {
   res.render('login', { title: 'Master Login' });
-  // res.send('login :D')
 };
 
-exports.register = async (req, res) => {
-  res.render('register', { title: 'Master Register' });
-  // res.send('login :D')
+exports.registerFrom = async (req, res) => {
+  res.render('register', { title: 'Master Login' });
+};
+
+exports.register = async (req, res, next) => {
+  const { name, email, password } = req.body;
+  const user = new User({ email, name });
+  // User.register(user, password, function(err,user){}); // from passport local model
+  const registerWithPromise = promisify(User.register, User);
+  await registerWithPromise(user, password);
+  next();
 };
 
 exports.validateRegister = (req, res, next) => {

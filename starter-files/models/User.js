@@ -3,7 +3,7 @@ mongoose.Promise = global.Promise; // set mongoose io style to global promise li
 const md5 = require('md5');
 const validator = require('validator');
 const mongodbErrorHandler = require('mongoose-mongodb-errors');
-const passportLocalMongoose = require('password-local-mongoose');
+const passportLocalMongoose = require('passport-local-mongoose');
 
 const schema = new mongoose.Schema({
   email: {
@@ -23,6 +23,12 @@ const schema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+});
+
+schema.virtual('gravatar').get(function () {
+  // return `https://6b33.net/wp-content/uploads/2019/11/black-widow-big-boobs-pictures_4475_1_beautiful.jpg`;
+  const hash = md5(this.email);
+  return `https://gravatar.com/avatar/${hash}?s=200`;
 });
 
 schema.plugin(passportLocalMongoose, { usernameField: 'email' });

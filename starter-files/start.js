@@ -24,8 +24,10 @@ mongoose.connection.on('error', (err) => {
 });
 
 // READY?! Let's go!
+
 // import db modells as singleton model
 require('./models/Store');
+require('./models/User');
 
 // Start our app!
 const app = require('./app');

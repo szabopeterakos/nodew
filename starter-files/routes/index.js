@@ -3,6 +3,7 @@ const SendmailTransport = require('nodemailer/lib/sendmail-transport');
 const router = express.Router();
 const ctrl = require('./../controllers/storectrl');
 const usrctrl = require('./../controllers/usrctrl');
+const authctrl = require('./../controllers/authctrl');
 const { catchErrors } = require('../handlers/errorHandlers'); // object descructoring
 
 // Do work here
@@ -47,7 +48,7 @@ router.get('/pug2/:owner', (req, res) => {
 router.get('/ctrl', ctrl.middleWare, ctrl.homePage);
 router.get('/err', ctrl.err);
 
-router.get('/add', ctrl.add);
+router.get('/add', authctrl.isLoggedIn, ctrl.add);
 // router.post('/add', ctrl.create);
 router.post('/add', ctrl.upload, catchErrors(ctrl.resize), catchErrors(ctrl.createWrapped)); // immediately runs catchErrors funciton ->
 router.post('/add/:id', ctrl.upload, catchErrors(ctrl.resize), catchErrors(ctrl.updateStore));
@@ -66,16 +67,15 @@ router.get('/tags/:tag', catchErrors(ctrl.getStoresByTag));
 // --------------------------------------------------
 
 router.get('/login', catchErrors(usrctrl.login));
-router.get('/register', catchErrors(usrctrl.register));
+router.post('/login', authctrl.login);
+
+router.get('/register', catchErrors(usrctrl.registerFrom));
+
+router.get('/logout', catchErrors(authctrl.logout));
 
 // validate reg data
 // register the user
 // log in
-router.post(
-  '/register',
-  usrctrl.validateRegister
-  // ,
-  // catchErrors(usrctrl.login)
-);
+router.post('/register', usrctrl.validateRegister, catchErrors(usrctrl.register), authctrl.login);
 
 module.exports = router;
