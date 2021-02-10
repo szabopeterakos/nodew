@@ -2,6 +2,7 @@ const express = require('express');
 const SendmailTransport = require('nodemailer/lib/sendmail-transport');
 const router = express.Router();
 const ctrl = require('./../controllers/storectrl');
+const usrctrl = require('./../controllers/usrctrl');
 const { catchErrors } = require('../handlers/errorHandlers'); // object descructoring
 
 // Do work here
@@ -62,7 +63,19 @@ router.get('/store/:slug', catchErrors(ctrl.getStoreBySlug));
 router.get('/tags', catchErrors(ctrl.getStoresByTag));
 router.get('/tags/:tag', catchErrors(ctrl.getStoresByTag));
 
-
 // --------------------------------------------------
+
+router.get('/login', catchErrors(usrctrl.login));
+router.get('/register', catchErrors(usrctrl.register));
+
+// validate reg data
+// register the user
+// log in
+router.post(
+  '/register',
+  usrctrl.validateRegister
+  // ,
+  // catchErrors(usrctrl.login)
+);
 
 module.exports = router;
