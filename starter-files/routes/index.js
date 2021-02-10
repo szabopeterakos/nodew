@@ -57,4 +57,8 @@ router.get('/', catchErrors(ctrl.getStores));
 router.get('/stores', catchErrors(ctrl.getStores));
 router.get('/stores/:id/edit', catchErrors(ctrl.editStore));
 
+router.get('/store/:slug', catchErrors(ctrl.getStoreBySlug));
+
+// --------------------------------------------------
+
 module.exports = router;
