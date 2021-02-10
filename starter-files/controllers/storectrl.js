@@ -1,5 +1,20 @@
 const mongoose = require('mongoose');
 const Store = mongoose.model('Store');
+const multer = require('multer');
+const jimp = require('jimp');
+const uuid = require('uuid');
+
+const multerOptions = {
+  storage: multer.memoryStorage(), // where to strored,
+  fileFilter(req, file, next) {
+    const isPhoto = file.mimetype.startsWith('image/');
+    if (isPhoto) {
+      next(null, true); // next callback promise, first value means error, if first null, second something means is fine.
+    } else {
+      next({ message: 'This file is not allowed' }, false);
+    }
+  }, // what is allowed
+};
 
 exports.homePage = (req, res) => {
   console.log('>>>>>>>>>>>>>>', req.name);
@@ -45,6 +60,25 @@ exports.createWrapped = async (req, res) => {
   await store.save();
   req.flash('info', `Successfully created ${store.name}`);
   res.redirect(`/store/${store.slug}`);
+};
+
+// to upload a file for creation
+exports.upload = multer(multerOptions).single('photo');
+//resize
+exports.resize = async (req, res, next) => {
+  if (!req.file) {
+    next();
+    return;
+  }
+  console.log(req.file);
+  const extension = req.file.mimetype.split('/')[1];
+  req.body.photo = `${uuid.v4()}.${extension}`;
+  // resize
+  const photo = await jimp.read(req.file.buffer);
+  await photo.resize(800, jimp.AUTO);
+  await photo.write(`./public/uploads/${req.body.photo}`);
+  // once we have written to our filesystem -> keep going
+  next();
 };
 
 exports.getStores = async (req, res) => {

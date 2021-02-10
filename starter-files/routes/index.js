@@ -45,10 +45,11 @@ router.get('/pug2/:owner', (req, res) => {
 
 router.get('/ctrl', ctrl.middleWare, ctrl.homePage);
 router.get('/err', ctrl.err);
+
 router.get('/add', ctrl.add);
 // router.post('/add', ctrl.create);
-router.post('/add', catchErrors(ctrl.createWrapped)); // immediately runs catchErrors funciton ->
-router.post('/add/:id', catchErrors(ctrl.updateStore));
+router.post('/add', ctrl.upload, catchErrors(ctrl.resize), catchErrors(ctrl.createWrapped)); // immediately runs catchErrors funciton ->
+router.post('/add/:id', ctrl.upload, catchErrors(ctrl.resize), catchErrors(ctrl.updateStore));
 
 // --------------------------------------------------
 
