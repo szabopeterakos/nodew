@@ -56,6 +56,7 @@ exports.create = async (req, res) => {
 };
 
 exports.createWrapped = async (req, res) => {
+  req.body.author = req.user._id; // here we can populate the user_id data
   const store = await new Store(req.body).save(); // a save return value contains the store.slug what is generated on db side.
   await store.save();
   req.flash('info', `Successfully created ${store.name}`);
@@ -88,12 +89,18 @@ exports.getStores = async (req, res) => {
   res.render('stores', { title: 'Stores', stores });
 };
 
+const confirmOwner = (store, user) => {
+  if (!store.author.equals(user._id) || user.level < 10) { // u can use groups/user types
+    throw Error('You must own this store to edit it!');
+  }
+};
+
 exports.editStore = async (req, res) => {
   //find
   const store = await Store.findOne({ _id: req.params.id });
   // res.json(store);
   // confirm
-
+  confirmOwner(store, req.user);
   // render out
   res.render('edit', { title: `Edit Store ${store.name}`, store });
 };
@@ -116,7 +123,7 @@ exports.updateStore = async (req, res) => {
 };
 
 exports.getStoreBySlug = async (req, res, next) => {
-  const store = await Store.findOne({ slug: req.params.slug });
+  const store = await Store.findOne({ slug: req.params.slug }).populate('author'); // populate the author field to a maximum view
   if (!store) return next();
   // res.json(store);
   res.render('store', { store, title: store.name });

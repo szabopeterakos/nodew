@@ -35,6 +35,11 @@ const schema = new mongoose.Schema({
     },
   },
   photo: String,
+  author: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User', // refer the created User in the user.js
+    required: 'You must supply an author',
+  },
 });
 
 schema.pre('save', async function (next) {
