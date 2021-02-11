@@ -78,4 +78,11 @@ router.get('/logout', catchErrors(authctrl.logout));
 // log in
 router.post('/register', usrctrl.validateRegister, catchErrors(usrctrl.register), authctrl.login);
 
+router.get('/account', authctrl.isLoggedIn, usrctrl.account);
+router.post('/account', catchErrors(usrctrl.updateAccount));
+
+router.post('/account/forgot', catchErrors(authctrl.forgot));
+router.get('/account/reset/:token', catchErrors(authctrl.token));
+router.post('/account/reset/:token', authctrl.confirmPass, catchErrors(authctrl.update));
+
 module.exports = router;

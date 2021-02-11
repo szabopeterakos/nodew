@@ -60,7 +60,8 @@ app.use(flash());
 app.use((req, res, next) => {
   res.locals.h = helpers; // locals the variables what available to you in the template
   res.locals.flashes = req.flash();
-  res.locals.user = req.user || null;
+  res.locals.user = req.user || null; // req.user passed to here via passport
+  res.locals.test = 'Add this test line to every req!';
   res.locals.currentPath = req.path;
   next();
 });

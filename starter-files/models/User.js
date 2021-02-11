@@ -23,6 +23,8 @@ const schema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date },
 });
 
 schema.virtual('gravatar').get(function () {
